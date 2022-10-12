@@ -14,6 +14,7 @@ const PARTICLE_VERTEX_SHADER: string = `#version 300 es
 
     uniform float u_timeDelta;
     uniform float u_time;
+    uniform vec2 u_origin;
 
     out vec2 v_position;
     out vec2 v_velocity;
@@ -59,7 +60,7 @@ const PARTICLE_VERTEX_SHADER: string = `#version 300 es
         v_radius -= u_timeDelta;
 
         gl_PointSize = a_radius;
-        gl_Position = vec4(v_position, 0.0, 1.0);
+        gl_Position = vec4(v_position + u_origin, 0.0, 1.0);
     }
 `
 
@@ -76,5 +77,8 @@ const PARTICLE_FRAGMENT_SHADER: string = `#version 300 es
 
 export const particleShaderProgram: ShaderProgram = new ShaderProgram(PARTICLE_VERTEX_SHADER, PARTICLE_FRAGMENT_SHADER, ['v_position', 'v_velocity', 'v_color', 'v_radius', 'v_lifeTime'])
 
-export const particleShaderTimeDeltaUniformLocation: WebGLUniformLocation = gl.getUniformLocation(particleShaderProgram.getProgram(), 'u_timeDelta') as WebGLUniformLocation
-export const particleShaderTimeUniformLocation: WebGLUniformLocation = gl.getUniformLocation(particleShaderProgram.getProgram(), 'u_time') as WebGLUniformLocation
+export const partcileShaderUniforms = {
+	timeDelta: gl.getUniformLocation(particleShaderProgram.getProgram(), 'u_timeDelta') as WebGLUniformLocation,
+	time: gl.getUniformLocation(particleShaderProgram.getProgram(), 'u_time') as WebGLUniformLocation,
+	origin: gl.getUniformLocation(particleShaderProgram.getProgram(), 'u_origin') as WebGLUniformLocation,
+}

@@ -1,7 +1,7 @@
 import { gl } from './global.js'
-import { particleShaderTimeDeltaUniformLocation, particleShaderProgram } from './resources/shaders/particleShader.js'
+import { partcileShaderUniforms, particleShaderProgram } from './resources/shaders/particleShader.js'
 import { COLOR_SIZE_BYTES, getRandomColor } from './types/color.js'
-import { Particle, PARTICLE_FLOAT_COUNT, PARTICLE_SIZE_BYTES } from './types/particle.js'
+import { PARTICLE_SIZE_BYTES } from './types/particle.js'
 import { Vector2, VECTOR2_SIZE_BYTES } from './types/vector2.js'
 
 export class ParticleSystem {
@@ -10,9 +10,11 @@ export class ParticleSystem {
 	private glBuffers: WebGLBuffer[] = []
 	private particleCount: number
 	private currentVaoIdx: number = 0
+	private origin: Vector2
 
-	constructor(particleCount: number, position: Vector2) {
+	constructor(particleCount: number, origin: Vector2 = { x: 0, y: 0 }) {
 		this.particleCount = particleCount
+		this.origin = origin
 
 		this.vaos = [gl.createVertexArray() as WebGLVertexArrayObject, gl.createVertexArray() as WebGLVertexArrayObject]
 		this.tfos = [gl.createTransformFeedback() as WebGLTransformFeedback, gl.createTransformFeedback() as WebGLTransformFeedback]
@@ -70,6 +72,8 @@ export class ParticleSystem {
 		const idx: number = (this.currentVaoIdx + 1) % 2
 		const vaoSource: WebGLVertexArrayObject = this.vaos[this.currentVaoIdx]
 		const transformFeedback: WebGLTransformFeedback = this.tfos[idx]
+
+		gl.uniform2f(partcileShaderUniforms.origin, this.origin.x, this.origin.y)
 
 		gl.bindVertexArray(vaoSource)
 		gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, transformFeedback)
