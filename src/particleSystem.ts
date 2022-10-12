@@ -64,18 +64,12 @@ export class ParticleSystem {
 		// Life time
 		gl.vertexAttribPointer(4, 1, gl.FLOAT, false, PARTICLE_SIZE_BYTES, VECTOR2_SIZE_BYTES + VECTOR2_SIZE_BYTES + COLOR_SIZE_BYTES + Float32Array.BYTES_PER_ELEMENT)
 		gl.enableVertexAttribArray(4)
-
-		// Age
-		gl.vertexAttribPointer(5, 1, gl.FLOAT, false, PARTICLE_SIZE_BYTES, VECTOR2_SIZE_BYTES + VECTOR2_SIZE_BYTES + COLOR_SIZE_BYTES + Float32Array.BYTES_PER_ELEMENT + Float32Array.BYTES_PER_ELEMENT)
-		gl.enableVertexAttribArray(5)
 	}
 
-	public draw(deltaTime: number) {
+	public draw() {
 		const idx: number = (this.currentVaoIdx + 1) % 2
 		const vaoSource: WebGLVertexArrayObject = this.vaos[this.currentVaoIdx]
 		const transformFeedback: WebGLTransformFeedback = this.tfos[idx]
-
-		gl.uniform1f(particleShaderTimeDeltaUniformLocation, deltaTime)
 
 		gl.bindVertexArray(vaoSource)
 		gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, transformFeedback)

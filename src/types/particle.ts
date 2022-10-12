@@ -9,5 +9,5 @@ export type Particle = {
 	lifeTime: number
 }
 
-export const PARTICLE_FLOAT_COUNT: number = 2 + 2 + 3 + 1 + 1 + 1
+export const PARTICLE_FLOAT_COUNT: number = 2 + 2 + 3 + 1 + 1
 export const PARTICLE_SIZE_BYTES: number = PARTICLE_FLOAT_COUNT * Float32Array.BYTES_PER_ELEMENT

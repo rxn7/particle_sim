@@ -2,8 +2,9 @@ import { canvas, gl } from './global.js'
 import { WebGL2NotSupportedError } from './errors/webGL2Error.js'
 import { ParticleSystem } from './particleSystem.js'
 import { Vector2 } from './types/vector2.js'
+import { particleShaderTimeDeltaUniformLocation, particleShaderTimeUniformLocation } from './resources/shaders/particleShader.js'
 
-const particleSystem: ParticleSystem = new ParticleSystem(5, { x: 0, y: 0 })
+const particleSystem: ParticleSystem = new ParticleSystem(10000, { x: 0, y: 0 })
 let oldTimeStamp: DOMHighResTimeStamp = 0
 
 function init() {
@@ -22,7 +23,10 @@ function animationFrame(timeStamp: DOMHighResTimeStamp): void {
 	gl.clearColor(0.0, 0.0, 0, 1.0)
 	gl.clear(gl.COLOR_BUFFER_BIT)
 
-	particleSystem.draw(timeDelta)
+	gl.uniform1f(particleShaderTimeUniformLocation, timeStamp)
+	gl.uniform1f(particleShaderTimeDeltaUniformLocation, timeDelta)
+
+	particleSystem.draw()
 }
 
 function updateSize() {
