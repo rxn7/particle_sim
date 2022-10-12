@@ -1,2 +1,0 @@
-export const PARTICLE_FLOAT_COUNT = 2 + 2 + 3 + 1 + 1 + 1;
-export const PARTICLE_SIZE_BYTES = PARTICLE_FLOAT_COUNT * Float32Array.BYTES_PER_ELEMENT;

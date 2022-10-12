@@ -1,1 +1,0 @@
-export const VECTOR2_SIZE_BYTES = 2 * Float32Array.BYTES_PER_ELEMENT;
