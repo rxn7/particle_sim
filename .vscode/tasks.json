@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "tsc"
+    },
+    {
+      "label": "run",
+      "type": "shell",
+      "command": "tsc ; live-server"
+    }
+  ]
+}

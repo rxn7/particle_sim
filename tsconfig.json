@@ -1,0 +1,29 @@
+{
+	"compilerOptions": {
+		"target": "es6",
+		"module": "es6",
+		"rootDir": "./src",
+		"allowJs": false,
+		"declaration": false,
+		"declarationMap": false,
+		"sourceMap": false,
+		"outDir": "./build",
+		"removeComments": true,
+		"inlineSourceMap": false,
+		"inlineSources": false,
+		"noEmitOnError": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"noImplicitAny": true,
+		"strictNullChecks": true,
+		"strictFunctionTypes": true,
+		"strictBindCallApply": true,
+		"strictPropertyInitialization": true,
+		"noImplicitThis": true,
+		"noUnusedLocals": false,
+		"noImplicitReturns": true,
+		"noImplicitOverride": true,
+		"skipLibCheck": true
+	}
+}
