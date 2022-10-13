@@ -1,8 +1,9 @@
-import { camera, canvas, gl } from './global.js'
+import { camera, gl } from './global.js'
 import { partcileShaderUniforms, particleShaderProgram } from './resources/shaders/particleShader.js'
-import { COLOR_SIZE_BYTES, getRandomColor } from './types/color.js'
+import { COLOR_SIZE_BYTES } from './types/color.js'
 import { PARTICLE_SIZE_BYTES } from './types/particle.js'
 import { Vector2, VECTOR2_SIZE_BYTES } from './types/vector2.js'
+import { FLOAT_SIZE_BYTES } from './helpers/sizes.js'
 
 export class ParticleSystem {
 	private vaos: WebGLVertexArrayObject[] = []
@@ -57,25 +58,27 @@ export class ParticleSystem {
 	}
 
 	private setVertexAttribPointers() {
+		let offset: number = 0
+
 		// Position
 		gl.vertexAttribPointer(0, 2, gl.FLOAT, false, PARTICLE_SIZE_BYTES, 0)
 		gl.enableVertexAttribArray(0)
+		offset += VECTOR2_SIZE_BYTES
 
 		// Velocity
-		gl.vertexAttribPointer(1, 2, gl.FLOAT, false, PARTICLE_SIZE_BYTES, VECTOR2_SIZE_BYTES)
+		gl.vertexAttribPointer(1, 2, gl.FLOAT, false, PARTICLE_SIZE_BYTES, offset)
 		gl.enableVertexAttribArray(1)
+		offset += VECTOR2_SIZE_BYTES
 
 		// Color
-		gl.vertexAttribPointer(2, 3, gl.FLOAT, false, PARTICLE_SIZE_BYTES, VECTOR2_SIZE_BYTES + VECTOR2_SIZE_BYTES)
+		gl.vertexAttribPointer(2, 3, gl.FLOAT, false, PARTICLE_SIZE_BYTES, offset)
 		gl.enableVertexAttribArray(2)
+		offset += COLOR_SIZE_BYTES
 
 		// Radius
-		gl.vertexAttribPointer(3, 1, gl.FLOAT, false, PARTICLE_SIZE_BYTES, VECTOR2_SIZE_BYTES + VECTOR2_SIZE_BYTES + COLOR_SIZE_BYTES)
+		gl.vertexAttribPointer(3, 1, gl.FLOAT, false, PARTICLE_SIZE_BYTES, offset)
 		gl.enableVertexAttribArray(3)
-
-		// Life time
-		gl.vertexAttribPointer(4, 1, gl.FLOAT, false, PARTICLE_SIZE_BYTES, VECTOR2_SIZE_BYTES + VECTOR2_SIZE_BYTES + COLOR_SIZE_BYTES + Float32Array.BYTES_PER_ELEMENT)
-		gl.enableVertexAttribArray(4)
+		offset += FLOAT_SIZE_BYTES
 	}
 
 	public draw() {
