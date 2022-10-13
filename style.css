@@ -1,4 +1,14 @@
+body {
+	color: white;
+}
+
+#instructions {
+	user-select: none;
+	text-align: center;
+}
+
 #canvas {
+	z-index: -1;
 	position: absolute;
 	top: 0;
 	left: 0;

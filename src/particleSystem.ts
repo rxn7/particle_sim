@@ -37,7 +37,7 @@ export class ParticleSystem {
 
 			this.tfBuffersa[i] = gl.createBuffer() as WebGLBuffer
 			gl.bindBuffer(gl.ARRAY_BUFFER, this.tfBuffersa[i])
-			gl.bufferData(gl.ARRAY_BUFFER, this.particleCount * PARTICLE_SIZE_BYTES, gl.STREAM_COPY)
+			gl.bufferData(gl.ARRAY_BUFFER, this.particleCount * PARTICLE_SIZE_BYTES, gl.DYNAMIC_COPY)
 			this.setVertexAttribPointers()
 
 			gl.bindBuffer(gl.ARRAY_BUFFER, null)
