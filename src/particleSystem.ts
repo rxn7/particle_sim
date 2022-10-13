@@ -1,4 +1,4 @@
-import { gl } from './global.js'
+import { camera, canvas, gl } from './global.js'
 import { partcileShaderUniforms, particleShaderProgram } from './resources/shaders/particleShader.js'
 import { COLOR_SIZE_BYTES, getRandomColor } from './types/color.js'
 import { PARTICLE_SIZE_BYTES } from './types/particle.js'
@@ -7,10 +7,11 @@ import { Vector2, VECTOR2_SIZE_BYTES } from './types/vector2.js'
 export class ParticleSystem {
 	private vaos: WebGLVertexArrayObject[] = []
 	private tfos: WebGLTransformFeedback[] = []
-	private glBuffers: WebGLBuffer[] = []
+	private tfBuffersa: WebGLBuffer[] = []
 	private particleCount: number
 	private currentVaoIdx: number = 0
 	private origin: Vector2
+	private mouseClicked: boolean = true
 
 	constructor(particleCount: number, origin: Vector2 = { x: 0, y: 0 }) {
 		this.particleCount = particleCount
@@ -19,31 +20,40 @@ export class ParticleSystem {
 		this.vaos = [gl.createVertexArray() as WebGLVertexArrayObject, gl.createVertexArray() as WebGLVertexArrayObject]
 		this.tfos = [gl.createTransformFeedback() as WebGLTransformFeedback, gl.createTransformFeedback() as WebGLTransformFeedback]
 
+		window.addEventListener('mousedown', ev => {
+			this.handleMouseClick({ x: ev.clientX, y: ev.clientY })
+		})
+
 		this.initBuffers()
 	}
 
 	private initBuffers() {
-		this.glBuffers = []
+		this.tfBuffersa = []
 
 		for (let i: number = 0; i < 2; ++i) {
 			gl.bindVertexArray(this.vaos[i])
 
 			particleShaderProgram.bind()
 
-			this.glBuffers[i] = gl.createBuffer() as WebGLBuffer
-			gl.bindBuffer(gl.ARRAY_BUFFER, this.glBuffers[i])
+			this.tfBuffersa[i] = gl.createBuffer() as WebGLBuffer
+			gl.bindBuffer(gl.ARRAY_BUFFER, this.tfBuffersa[i])
 			gl.bufferData(gl.ARRAY_BUFFER, this.particleCount * PARTICLE_SIZE_BYTES, gl.STREAM_COPY)
 			this.setVertexAttribPointers()
 
 			gl.bindBuffer(gl.ARRAY_BUFFER, null)
 
 			gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, this.tfos[i])
-			gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, this.glBuffers[i])
+			gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, this.tfBuffersa[i])
 
 			gl.bindVertexArray(null)
 		}
 
 		this.currentVaoIdx = 0
+	}
+
+	public handleMouseClick(position: Vector2) {
+		this.origin = camera.screenToWorld(position)
+		this.mouseClicked = true
 	}
 
 	private setVertexAttribPointers() {
@@ -73,6 +83,7 @@ export class ParticleSystem {
 		const vaoSource: WebGLVertexArrayObject = this.vaos[this.currentVaoIdx]
 		const transformFeedback: WebGLTransformFeedback = this.tfos[idx]
 
+		gl.uniform1i(partcileShaderUniforms.randomize, +this.mouseClicked)
 		gl.uniform2f(partcileShaderUniforms.origin, this.origin.x, this.origin.y)
 
 		gl.bindVertexArray(vaoSource)
@@ -83,5 +94,6 @@ export class ParticleSystem {
 		gl.endTransformFeedback()
 
 		this.currentVaoIdx = idx
+		this.mouseClicked = false
 	}
 }
