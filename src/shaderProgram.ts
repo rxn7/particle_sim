@@ -2,11 +2,12 @@ import { ShaderCompileError } from './errors/shaderCompileError.js'
 import { gl } from './global.js'
 
 export class ShaderProgram {
-	private program: WebGLProgram
-	private vertexShader: WebGLShader
-	private fragmentShader: WebGLShader
+	public uniforms: any
+	protected program: WebGLProgram
+	protected vertexShader: WebGLShader
+	protected fragmentShader: WebGLShader
 
-	constructor(vertSrc: string, fragSrc: string, tfVaryings: string[] | null = null) {
+	protected constructor(vertSrc: string, fragSrc: string, tfVaryings: string[] | null = null) {
 		this.program = gl.createProgram() as WebGLProgram
 
 		this.fragmentShader = this.createShader(fragSrc, gl.FRAGMENT_SHADER)
@@ -33,8 +34,10 @@ export class ShaderProgram {
 		return shader
 	}
 
+	public getUniformLocation = (name: string): WebGLUniformLocation => gl.getUniformLocation(this.program, name) as WebGLUniformLocation
 	public unbind = (): void => gl.useProgram(null)
 	public bind = (): void => gl.useProgram(this.program)
+
 	public getFragmentShader = (): WebGLShader => this.fragmentShader
 	public getVertexShader = (): WebGLShader => this.vertexShader
 	public getProgram = (): WebGLProgram => this.program

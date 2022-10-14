@@ -1,12 +1,11 @@
-import { camera, canvas, gl } from './global.js'
+import { camera, canvas, gl, shaders } from './global.js'
 import { WebGL2NotSupportedError } from './errors/webGL2Error.js'
 import { ParticleSystem } from './particleSystem.js'
-import { partcileShaderUniforms as particleShaderUniforms, particleShaderProgram } from './resources/shaders/particleShader.js'
 
 const particleSystem: ParticleSystem = new ParticleSystem(500, { x: 0, y: 0.2 })
 let oldTimeStamp: DOMHighResTimeStamp = 0
 
-function init() {
+function init(): void {
 	if (!gl) throw new WebGL2NotSupportedError()
 
 	updateSize()
@@ -19,23 +18,23 @@ function animationFrame(timeStamp: DOMHighResTimeStamp): void {
 	draw()
 }
 
-function update(timeStamp: DOMHighResTimeStamp) {
+function update(timeStamp: DOMHighResTimeStamp): void {
 	const timeDelta = oldTimeStamp == 0 ? 0 : (timeStamp - oldTimeStamp) / 1000
 	oldTimeStamp = timeStamp
 
-	gl.uniform1f(particleShaderUniforms.time, timeStamp)
-	gl.uniform1f(particleShaderUniforms.timeDelta, timeDelta)
-	gl.uniformMatrix4fv(particleShaderUniforms.projectionMatrix, false, camera.getProjectionMatrixValues())
+	gl.uniform1f(shaders.particleShaderProgram.uniforms.time, timeStamp)
+	gl.uniform1f(shaders.particleShaderProgram.uniforms.timeDelta, timeDelta)
+	gl.uniformMatrix4fv(shaders.particleShaderProgram.uniforms.projectionMatrix, false, camera.getProjectionMatrixValues())
 }
 
-function draw() {
+function draw(): void {
 	gl.clearColor(0.0, 0.0, 0, 1.0)
 	gl.clear(gl.COLOR_BUFFER_BIT)
 
 	particleSystem.draw()
 }
 
-function updateSize() {
+function updateSize(): void {
 	const width: number = Math.trunc(window.visualViewport?.width || window.innerWidth)
 	const height: number = Math.trunc(window.visualViewport?.height || window.innerHeight)
 

@@ -1,7 +1,20 @@
-import { gl } from '../../global.js'
 import { ShaderProgram } from '../../shaderProgram.js'
 
-const PARTICLE_VERTEX_SHADER: string = `#version 300 es
+export class ParticleShaderProgram extends ShaderProgram {
+	constructor() {
+		super(PARTICLE_VERTEX_SHADER, PARTICLE_FRAGMENT_SHADER, ['v_position', 'v_velocity', 'v_color', 'v_radius'])
+
+		this.uniforms = {
+			timeDelta: this.getUniformLocation('u_timeDelta'),
+			time: this.getUniformLocation('u_time'),
+			origin: this.getUniformLocation('u_origin'),
+			randomize: this.getUniformLocation('u_randomize'),
+			projectionMatrix: this.getUniformLocation('u_projMatrix'),
+		}
+	}
+}
+
+const PARTICLE_VERTEX_SHADER: string = /*glsl*/ `#version 300 es
     precision mediump float;
 
     const float GRAVITY = -980.0;
@@ -55,7 +68,7 @@ const PARTICLE_VERTEX_SHADER: string = `#version 300 es
     }
 `
 
-const PARTICLE_FRAGMENT_SHADER: string = `#version 300 es
+const PARTICLE_FRAGMENT_SHADER: string = /*glsl*/ `#version 300 es
     precision mediump float;
 
     in vec3 v_color;
@@ -65,13 +78,3 @@ const PARTICLE_FRAGMENT_SHADER: string = `#version 300 es
         f_color = vec4(v_color, 1.0);
     }
 `
-
-export const particleShaderProgram: ShaderProgram = new ShaderProgram(PARTICLE_VERTEX_SHADER, PARTICLE_FRAGMENT_SHADER, ['v_position', 'v_velocity', 'v_color', 'v_radius'])
-
-export const partcileShaderUniforms = {
-	timeDelta: gl.getUniformLocation(particleShaderProgram.getProgram(), 'u_timeDelta') as WebGLUniformLocation,
-	time: gl.getUniformLocation(particleShaderProgram.getProgram(), 'u_time') as WebGLUniformLocation,
-	origin: gl.getUniformLocation(particleShaderProgram.getProgram(), 'u_origin') as WebGLUniformLocation,
-	randomize: gl.getUniformLocation(particleShaderProgram.getProgram(), 'u_randomize') as WebGLUniformLocation,
-	projectionMatrix: gl.getUniformLocation(particleShaderProgram.getProgram(), 'u_projMatrix') as WebGLUniformLocation,
-}

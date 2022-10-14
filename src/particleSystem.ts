@@ -1,9 +1,11 @@
-import { camera, gl } from './global.js'
-import { partcileShaderUniforms, particleShaderProgram } from './resources/shaders/particleShader.js'
-import { COLOR_SIZE_BYTES } from './types/color.js'
-import { PARTICLE_SIZE_BYTES } from './types/particle.js'
-import { Vector2, VECTOR2_SIZE_BYTES } from './types/vector2.js'
+import { camera, gl, shaders } from './global.js'
+import { COLOR_SIZE_BYTES } from './math/color.js'
+import { Vector2, VECTOR2_SIZE_BYTES } from './math/vector2.js'
 import { FLOAT_SIZE_BYTES } from './helpers/sizes.js'
+
+// position, velocity, color, radius
+const PARTICLE_FLOAT_COUNT: number = 2 + 2 + 3 + 1
+const PARTICLE_SIZE_BYTES: number = PARTICLE_FLOAT_COUNT * FLOAT_SIZE_BYTES
 
 export class ParticleSystem {
 	private vaos: WebGLVertexArrayObject[] = []
@@ -28,13 +30,13 @@ export class ParticleSystem {
 		this.initBuffers()
 	}
 
-	private initBuffers() {
+	private initBuffers(): void {
 		this.tfBuffersa = []
 
 		for (let i: number = 0; i < 2; ++i) {
 			gl.bindVertexArray(this.vaos[i])
 
-			particleShaderProgram.bind()
+			shaders.particleShaderProgram.bind()
 
 			this.tfBuffersa[i] = gl.createBuffer() as WebGLBuffer
 			gl.bindBuffer(gl.ARRAY_BUFFER, this.tfBuffersa[i])
@@ -52,12 +54,12 @@ export class ParticleSystem {
 		this.currentVaoIdx = 0
 	}
 
-	public handleMouseClick(position: Vector2) {
+	public handleMouseClick(position: Vector2): void {
 		this.origin = camera.screenToWorld(position)
 		this.mouseClicked = true
 	}
 
-	private setVertexAttribPointers() {
+	private setVertexAttribPointers(): void {
 		let offset: number = 0
 
 		// Position
@@ -81,13 +83,13 @@ export class ParticleSystem {
 		offset += FLOAT_SIZE_BYTES
 	}
 
-	public draw() {
+	public draw(): void {
 		const idx: number = (this.currentVaoIdx + 1) % 2
 		const vaoSource: WebGLVertexArrayObject = this.vaos[this.currentVaoIdx]
 		const transformFeedback: WebGLTransformFeedback = this.tfos[idx]
 
-		gl.uniform1i(partcileShaderUniforms.randomize, +this.mouseClicked)
-		gl.uniform2f(partcileShaderUniforms.origin, this.origin.x, this.origin.y)
+		gl.uniform1i(shaders.particleShaderProgram.uniforms.randomize, +this.mouseClicked)
+		gl.uniform2f(shaders.particleShaderProgram.uniforms.origin, this.origin.x, this.origin.y)
 
 		gl.bindVertexArray(vaoSource)
 		gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, transformFeedback)

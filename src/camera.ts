@@ -1,6 +1,6 @@
 import { canvas } from './global.js'
-import { Matrix4 } from './types/matrix4.js'
-import { Vector2 } from './types/vector2.js'
+import { Matrix4 } from './math/matrix4.js'
+import { Vector2 } from './math/vector2.js'
 
 export class Camera {
 	private projectionMatrix: Matrix4 = new Matrix4()
