@@ -1,8 +1,10 @@
 import { camera, canvas, gl, shaders } from './global.js'
 import { WebGL2NotSupportedError } from './errors/webGL2Error.js'
 import { ParticleSystem } from './particleSystem.js'
+import { Debug } from './debug.js'
 
-const particleSystem: ParticleSystem = new ParticleSystem(500, { x: 0, y: 0.2 })
+const PARTICLE_COUNT: number = 10_000
+const particleSystem: ParticleSystem = new ParticleSystem(PARTICLE_COUNT, { x: 0, y: 0.2 })
 let oldTimeStamp: DOMHighResTimeStamp = 0
 
 function init(): void {
@@ -21,6 +23,8 @@ function animationFrame(timeStamp: DOMHighResTimeStamp): void {
 function update(timeStamp: DOMHighResTimeStamp): void {
 	const timeDelta = oldTimeStamp == 0 ? 0 : (timeStamp - oldTimeStamp) / 1000
 	oldTimeStamp = timeStamp
+
+	Debug.update({ timeDelta: timeDelta, particleCount: PARTICLE_COUNT })
 
 	gl.uniform1f(shaders.particleShaderProgram.uniforms.time, timeStamp)
 	gl.uniform1f(shaders.particleShaderProgram.uniforms.timeDelta, timeDelta)
