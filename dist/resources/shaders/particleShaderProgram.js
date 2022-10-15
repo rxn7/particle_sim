@@ -1,20 +1,17 @@
-import { ShaderProgram } from '../../shaderProgram.js'
-
+import { ShaderProgram } from '../../shaderProgram.js';
 export class ParticleShaderProgram extends ShaderProgram {
-	constructor() {
-		super(PARTICLE_VERTEX_SHADER, PARTICLE_FRAGMENT_SHADER, ['v_position', 'v_velocity', 'v_color', 'v_radius'])
-
-		this.uniforms = {
-			timeDelta: this.getUniformLocation('u_timeDelta'),
-			time: this.getUniformLocation('u_time'),
-			origin: this.getUniformLocation('u_origin'),
-			randomize: this.getUniformLocation('u_randomize'),
-			projectionMatrix: this.getUniformLocation('u_projMatrix'),
-		}
-	}
+    constructor() {
+        super(PARTICLE_VERTEX_SHADER, PARTICLE_FRAGMENT_SHADER, ['v_position', 'v_velocity', 'v_color', 'v_radius']);
+        this.uniforms = {
+            timeDelta: this.getUniformLocation('u_timeDelta'),
+            time: this.getUniformLocation('u_time'),
+            origin: this.getUniformLocation('u_origin'),
+            randomize: this.getUniformLocation('u_randomize'),
+            projectionMatrix: this.getUniformLocation('u_projMatrix'),
+        };
+    }
 }
-
-const PARTICLE_VERTEX_SHADER: string = /*glsl*/ `#version 300 es
+const PARTICLE_VERTEX_SHADER = `#version 300 es
     precision mediump float;
 
     const float GRAVITY = -980.0;
@@ -66,9 +63,8 @@ const PARTICLE_VERTEX_SHADER: string = /*glsl*/ `#version 300 es
         gl_PointSize = v_radius;
         gl_Position = u_projMatrix * vec4(v_position, 0.0, 1.0);
     }
-`
-
-const PARTICLE_FRAGMENT_SHADER: string = /*glsl*/ `#version 300 es
+`;
+const PARTICLE_FRAGMENT_SHADER = `#version 300 es
     precision mediump float;
 
     in vec3 v_color;
@@ -77,4 +73,4 @@ const PARTICLE_FRAGMENT_SHADER: string = /*glsl*/ `#version 300 es
     void main(void) {
         f_color = vec4(v_color, 1.0);
     }
-`
+`;
