@@ -1,1 +1,0 @@
-export const FLOAT_SIZE_BYTES = Float32Array.BYTES_PER_ELEMENT;
