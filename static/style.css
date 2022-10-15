@@ -1,4 +1,5 @@
 body {
+	font-family: monospace;
 	color: white;
 }
 
@@ -8,7 +9,6 @@ body {
 }
 
 #debug {
-	font-family: monospace;
 	text-align: center;
 	user-select: none;
 	position: absolute;

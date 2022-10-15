@@ -2,10 +2,6 @@
 
 set -e
 
-git checkout master
+npx -y -p gh-pages@3.0.0 gh-pages -d build
 
-git checkout --orphan gh-pages
-git commit -a -m "Build update"
-
-
-echo "\e[1;32mProject has been successfuly built\e[0m"
+echo "\e[1;32mProject has been successfuly deployed!\e[0m"
