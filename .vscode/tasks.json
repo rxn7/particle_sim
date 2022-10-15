@@ -4,13 +4,7 @@
 		{
 			"label": "build",
 			"type": "shell",
-			"command": "tsc"
-		},
-		{
-			"label": "run",
-			"type": "shell",
-			"command": "tsc ; live-server",
-			"problemMatcher": []
+			"command": "./build.sh"
 		}
 	]
 }
