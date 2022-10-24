@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 pushd build
-live-server
+npx live-server
 popd

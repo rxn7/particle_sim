@@ -11,7 +11,7 @@ export class ParticleShaderProgram extends ShaderProgram {
 			time: this.getUniformLocation('u_time'),
 			origin: this.getUniformLocation('u_origin'),
 			projectionMatrix: this.getUniformLocation('u_projMatrix'),
-			random: this.getUniformLocation('u_random'),
+			init: this.getUniformLocation('u_init'),
 		}
 	}
 }
@@ -32,8 +32,8 @@ const PARTICLE_VERTEX_SHADER: string = /*glsl*/ `${GLSL_VERSION}
     layout(location=4) in float a_lifeTime;
     layout(location=5) in float a_maxLifeTime;
 
-    uniform float u_random;
     uniform float u_timeDelta;
+    uniform int u_init;
     uniform int u_time;
     uniform vec2 u_origin;
     uniform mat4 u_projMatrix;
@@ -47,7 +47,7 @@ const PARTICLE_VERTEX_SHADER: string = /*glsl*/ `${GLSL_VERSION}
     out float v_lifeRatio;
 
     void main(void) {
-        if(a_lifeTime >= a_maxLifeTime || a_lifeTime == 0.0) {
+        if(a_lifeTime >= a_maxLifeTime || u_init == 1) {
             float r = randf(uint(u_time * gl_VertexID));
             float r2 = randf(uint(gl_VertexID*4));
             float r3 = randf(uint(gl_VertexID*8));
@@ -57,7 +57,11 @@ const PARTICLE_VERTEX_SHADER: string = /*glsl*/ `${GLSL_VERSION}
             v_radius = 1.0 + r * 3.0;
             v_color = vec3(r, r2, r3);
             v_maxLifeTime = 3.0 + r3 * 1.5;
-            v_lifeTime = 0.0;
+
+            if(u_init == 1)
+                v_lifeTime = v_maxLifeTime * r;
+            else
+                v_lifeTime = 0.0;
         } else {
             v_position = a_position;
             v_velocity = a_velocity;

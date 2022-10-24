@@ -2,9 +2,6 @@
   "name": "particle_sim",
   "version": "1.0.0",
   "description": "Particle simulator written in TypeScript running in browser using WebGL2",
-  "devDependencies": {
-    "typescript": "^4.8.4"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rxtthin/particle_sim.git"
