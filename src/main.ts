@@ -4,11 +4,14 @@ import { ParticleSystem } from './particleSystem.js'
 import { Debug } from './debug.js'
 
 const PARTICLE_COUNT: number = 10_000
-const particleSystem: ParticleSystem = new ParticleSystem(PARTICLE_COUNT, { x: 0, y: 0.2 })
+const particleSystem: ParticleSystem = new ParticleSystem(PARTICLE_COUNT)
 let oldTimeStamp: DOMHighResTimeStamp = 0
 
 function init(): void {
 	if (!gl) throw new WebGL2NotSupportedError()
+
+	gl.enable(gl.BLEND)
+	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 
 	updateSize()
 	requestAnimationFrame(animationFrame)
@@ -26,7 +29,7 @@ function update(timeStamp: DOMHighResTimeStamp): void {
 
 	Debug.update({ timeDelta: timeDelta, particleCount: PARTICLE_COUNT })
 
-	gl.uniform1f(shaders.particleShaderProgram.uniforms.time, timeStamp)
+	gl.uniform1i(shaders.particleShaderProgram.uniforms.time, timeStamp * 1000)
 	gl.uniform1f(shaders.particleShaderProgram.uniforms.timeDelta, timeDelta)
 	gl.uniformMatrix4fv(shaders.particleShaderProgram.uniforms.projectionMatrix, false, camera.getProjectionMatrixValues())
 }
