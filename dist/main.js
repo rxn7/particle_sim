@@ -10,6 +10,7 @@ function init() {
         throw new WebGL2NotSupportedError();
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.uniform1i(shaders.particleShaderProgram.uniforms.init, 1);
     updateSize();
     requestAnimationFrame(animationFrame);
 }
@@ -22,6 +23,7 @@ function update(timeStamp) {
     const timeDelta = oldTimeStamp == 0 ? 0 : (timeStamp - oldTimeStamp) / 1000;
     oldTimeStamp = timeStamp;
     Debug.update({ timeDelta: timeDelta, particleCount: PARTICLE_COUNT });
+    console.log(timeStamp);
     gl.uniform1i(shaders.particleShaderProgram.uniforms.time, timeStamp * 1000);
     gl.uniform1f(shaders.particleShaderProgram.uniforms.timeDelta, timeDelta);
     gl.uniformMatrix4fv(shaders.particleShaderProgram.uniforms.projectionMatrix, false, camera.getProjectionMatrixValues());
@@ -30,6 +32,7 @@ function draw() {
     gl.clearColor(0.0, 0.0, 0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     particleSystem.draw();
+    gl.uniform1i(shaders.particleShaderProgram.uniforms.init, 0);
 }
 function updateSize() {
     var _a, _b;
