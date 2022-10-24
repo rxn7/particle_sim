@@ -14,6 +14,7 @@ function init(): void {
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 
 	gl.uniform1i(shaders.particleShaderProgram.uniforms.init, 1)
+
 	updateSize()
 	requestAnimationFrame(animationFrame)
 }
@@ -30,7 +31,6 @@ function update(timeStamp: DOMHighResTimeStamp): void {
 
 	Debug.update({ timeDelta: timeDelta, particleCount: PARTICLE_COUNT })
 
-	console.log(timeStamp)
 	gl.uniform1i(shaders.particleShaderProgram.uniforms.time, timeStamp * 1000)
 	gl.uniform1f(shaders.particleShaderProgram.uniforms.timeDelta, timeDelta)
 	gl.uniformMatrix4fv(shaders.particleShaderProgram.uniforms.projectionMatrix, false, camera.getProjectionMatrixValues())
@@ -41,7 +41,6 @@ function draw(): void {
 	gl.clear(gl.COLOR_BUFFER_BIT)
 
 	particleSystem.draw()
-
 	gl.uniform1i(shaders.particleShaderProgram.uniforms.init, 0)
 }
 
