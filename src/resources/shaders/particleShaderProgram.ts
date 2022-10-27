@@ -54,7 +54,7 @@ const PARTICLE_VERTEX_SHADER: string = /*glsl*/ `${GLSL_VERSION}
 
             v_position = u_origin;
             v_velocity = vec2(r * VELOCITY - HALF_VELOCITY, r2 * VELOCITY - HALF_VELOCITY);
-            v_radius = 1.0 + r * 3.0;
+            v_radius = 10.0 + r * 5.0;
             v_color = vec3(r, r2, r3);
             v_maxLifeTime = 3.0 + r3 * 1.5;
 
@@ -82,7 +82,7 @@ const PARTICLE_VERTEX_SHADER: string = /*glsl*/ `${GLSL_VERSION}
 `
 
 const PARTICLE_FRAGMENT_SHADER: string = /*glsl*/ `${GLSL_VERSION}
-    precision mediump float;
+    precision lowp float;
 
     in vec3 v_color;
     in float v_lifeRatio;
@@ -90,6 +90,13 @@ const PARTICLE_FRAGMENT_SHADER: string = /*glsl*/ `${GLSL_VERSION}
     out vec4 f_color;
     
     void main(void) {
-        f_color = vec4(v_color, 1.0 - v_lifeRatio);
+        vec2 delta = gl_PointCoord - vec2(0.5, 0.5);
+        float lenSqrt = abs(dot(delta, delta));
+
+        if(lenSqrt >= 0.25) {
+            f_color = vec4(0, 0, 0, 0);
+        } else {
+            f_color = vec4(v_color, 1.0 - v_lifeRatio);
+        }
     }
 `
