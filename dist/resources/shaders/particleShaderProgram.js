@@ -1,3 +1,4 @@
+import { Graphics } from '../../graphics.js';
 import { ShaderProgram } from '../../shaderProgram.js';
 import { SHADER_RAND_FUNC } from './include/rand.js';
 import { GLSL_VERSION } from './include/version.js';
@@ -11,6 +12,8 @@ export class ParticleShaderProgram extends ShaderProgram {
             projectionMatrix: this.getUniformLocation('u_projMatrix'),
             init: this.getUniformLocation('u_init'),
         };
+        this.bind();
+        Graphics.ctx.uniform1i(this.uniforms.init, 1);
     }
 }
 const PARTICLE_VERTEX_SHADER = `${GLSL_VERSION}
@@ -52,13 +55,14 @@ const PARTICLE_VERTEX_SHADER = `${GLSL_VERSION}
             v_position = u_origin;
             v_velocity = vec2(r * VELOCITY - HALF_VELOCITY, r2 * VELOCITY - HALF_VELOCITY);
             v_radius = 10.0 + r * 5.0;
-            v_color = vec3(r, r2, r3);
             v_maxLifeTime = 3.0 + r3 * 1.5;
+            v_color = vec3(r, r2, r3);
 
-            if(u_init == 1)
+            if(u_init == 1) {
                 v_lifeTime = v_maxLifeTime * r;
-            else
+            } else {
                 v_lifeTime = 0.0;
+            }
         } else {
             v_position = a_position;
             v_velocity = a_velocity;

@@ -1,7 +1,9 @@
-import { camera, gl, shaders } from './global.js';
 import { COLOR_SIZE_BYTES } from './math/color.js';
 import { VECTOR2_SIZE_BYTES } from './math/vector2.js';
 import { FLOAT_SIZE_BYTES } from './helpers/sizes.js';
+import { Graphics } from './graphics.js';
+import { Global } from './global.js';
+import { Resources } from './resources.js';
 export const PARTICLE_SIZE_BYTES = VECTOR2_SIZE_BYTES + VECTOR2_SIZE_BYTES + COLOR_SIZE_BYTES + FLOAT_SIZE_BYTES + FLOAT_SIZE_BYTES + FLOAT_SIZE_BYTES;
 export class ParticleSystem {
     constructor(particleCount) {
@@ -10,8 +12,8 @@ export class ParticleSystem {
         this.tfBuffersa = [];
         this.currentVaoIdx = 0;
         this.particleCount = particleCount;
-        this.vaos = [gl.createVertexArray(), gl.createVertexArray()];
-        this.tfos = [gl.createTransformFeedback(), gl.createTransformFeedback()];
+        this.vaos = [Graphics.ctx.createVertexArray(), Graphics.ctx.createVertexArray()];
+        this.tfos = [Graphics.ctx.createTransformFeedback(), Graphics.ctx.createTransformFeedback()];
         window.addEventListener('mousemove', ev => {
             this.handleMouseMove({ x: ev.clientX, y: ev.clientY });
         });
@@ -20,54 +22,54 @@ export class ParticleSystem {
     initBuffers() {
         this.tfBuffersa = [];
         for (let i = 0; i < 2; ++i) {
-            gl.bindVertexArray(this.vaos[i]);
-            shaders.particleShaderProgram.bind();
-            this.tfBuffersa[i] = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.tfBuffersa[i]);
-            gl.bufferData(gl.ARRAY_BUFFER, this.particleCount * PARTICLE_SIZE_BYTES, gl.DYNAMIC_COPY);
+            Graphics.ctx.bindVertexArray(this.vaos[i]);
+            Resources.shaders.particleShaderProgram?.bind();
+            this.tfBuffersa[i] = Graphics.ctx.createBuffer();
+            Graphics.ctx.bindBuffer(Graphics.ctx.ARRAY_BUFFER, this.tfBuffersa[i]);
+            Graphics.ctx.bufferData(Graphics.ctx.ARRAY_BUFFER, this.particleCount * PARTICLE_SIZE_BYTES, Graphics.ctx.DYNAMIC_COPY);
             this.setVertexAttribPointers();
-            gl.bindBuffer(gl.ARRAY_BUFFER, null);
-            gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, this.tfos[i]);
-            gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, this.tfBuffersa[i]);
-            gl.bindVertexArray(null);
+            Graphics.ctx.bindBuffer(Graphics.ctx.ARRAY_BUFFER, null);
+            Graphics.ctx.bindTransformFeedback(Graphics.ctx.TRANSFORM_FEEDBACK, this.tfos[i]);
+            Graphics.ctx.bindBufferBase(Graphics.ctx.TRANSFORM_FEEDBACK_BUFFER, 0, this.tfBuffersa[i]);
+            Graphics.ctx.bindVertexArray(null);
         }
         this.currentVaoIdx = 0;
     }
     handleMouseMove(position) {
-        const origin = camera.screenToWorld(position);
-        gl.uniform2f(shaders.particleShaderProgram.uniforms.origin, origin.x, origin.y);
+        const origin = Global.camera.screenToWorld(position);
+        Graphics.ctx.uniform2f(Resources.shaders.particleShaderProgram?.uniforms.origin, origin.x, origin.y);
     }
     setVertexAttribPointers() {
         let offset = 0;
         let idx = 0;
-        gl.vertexAttribPointer(idx, 2, gl.FLOAT, false, PARTICLE_SIZE_BYTES, 0);
-        gl.enableVertexAttribArray(idx++);
+        Graphics.ctx.vertexAttribPointer(idx, 2, Graphics.ctx.FLOAT, false, PARTICLE_SIZE_BYTES, 0);
+        Graphics.ctx.enableVertexAttribArray(idx++);
         offset += VECTOR2_SIZE_BYTES;
-        gl.vertexAttribPointer(idx, 2, gl.FLOAT, false, PARTICLE_SIZE_BYTES, offset);
-        gl.enableVertexAttribArray(idx++);
+        Graphics.ctx.vertexAttribPointer(idx, 2, Graphics.ctx.FLOAT, false, PARTICLE_SIZE_BYTES, offset);
+        Graphics.ctx.enableVertexAttribArray(idx++);
         offset += VECTOR2_SIZE_BYTES;
-        gl.vertexAttribPointer(idx, 3, gl.FLOAT, false, PARTICLE_SIZE_BYTES, offset);
-        gl.enableVertexAttribArray(idx++);
+        Graphics.ctx.vertexAttribPointer(idx, 3, Graphics.ctx.FLOAT, false, PARTICLE_SIZE_BYTES, offset);
+        Graphics.ctx.enableVertexAttribArray(idx++);
         offset += COLOR_SIZE_BYTES;
-        gl.vertexAttribPointer(idx, 1, gl.FLOAT, false, PARTICLE_SIZE_BYTES, offset);
-        gl.enableVertexAttribArray(idx++);
+        Graphics.ctx.vertexAttribPointer(idx, 1, Graphics.ctx.FLOAT, false, PARTICLE_SIZE_BYTES, offset);
+        Graphics.ctx.enableVertexAttribArray(idx++);
         offset += FLOAT_SIZE_BYTES;
-        gl.vertexAttribPointer(idx, 1, gl.FLOAT, false, PARTICLE_SIZE_BYTES, offset);
-        gl.enableVertexAttribArray(idx++);
+        Graphics.ctx.vertexAttribPointer(idx, 1, Graphics.ctx.FLOAT, false, PARTICLE_SIZE_BYTES, offset);
+        Graphics.ctx.enableVertexAttribArray(idx++);
         offset += FLOAT_SIZE_BYTES;
-        gl.vertexAttribPointer(idx, 1, gl.FLOAT, false, PARTICLE_SIZE_BYTES, offset);
-        gl.enableVertexAttribArray(idx++);
+        Graphics.ctx.vertexAttribPointer(idx, 1, Graphics.ctx.FLOAT, false, PARTICLE_SIZE_BYTES, offset);
+        Graphics.ctx.enableVertexAttribArray(idx++);
         offset += FLOAT_SIZE_BYTES;
     }
     draw() {
         const idx = (this.currentVaoIdx + 1) % 2;
         const vaoSource = this.vaos[this.currentVaoIdx];
         const transformFeedback = this.tfos[idx];
-        gl.bindVertexArray(vaoSource);
-        gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, transformFeedback);
-        gl.beginTransformFeedback(gl.POINTS);
-        gl.drawArrays(gl.POINTS, 0, this.particleCount);
-        gl.endTransformFeedback();
+        Graphics.ctx.bindVertexArray(vaoSource);
+        Graphics.ctx.bindTransformFeedback(Graphics.ctx.TRANSFORM_FEEDBACK, transformFeedback);
+        Graphics.ctx.beginTransformFeedback(Graphics.ctx.POINTS);
+        Graphics.ctx.drawArrays(Graphics.ctx.POINTS, 0, this.particleCount);
+        Graphics.ctx.endTransformFeedback();
         this.currentVaoIdx = idx;
     }
 }

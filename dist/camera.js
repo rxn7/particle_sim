@@ -1,4 +1,4 @@
-import { canvas } from './global.js';
+import { Graphics } from './graphics.js';
 import { Matrix4 } from './math/matrix4.js';
 export class Camera {
     constructor() {
@@ -14,8 +14,8 @@ export class Camera {
     }
     recalculate() {
         const invZoom = 1.0 / this.zoom;
-        const halfWidth = canvas.width * 0.5;
-        const halfHeight = canvas.height * 0.5;
+        const halfWidth = Graphics.canvas.width * 0.5;
+        const halfHeight = Graphics.canvas.height * 0.5;
         this.left = (this.position.x - halfWidth) * invZoom;
         this.right = (this.position.x + halfWidth) * invZoom;
         this.top = (this.position.y - halfHeight) * invZoom;
@@ -25,6 +25,6 @@ export class Camera {
     screenToWorld(position) {
         const width = this.right - this.left;
         const height = this.bottom - this.top;
-        return { x: this.left + (position.x / canvas.width) * width, y: this.top + (position.y / canvas.height) * height };
+        return { x: this.left + (position.x / Graphics.canvas.width) * width, y: this.top + (position.y / Graphics.canvas.height) * height };
     }
 }
