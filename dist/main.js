@@ -23,7 +23,6 @@ function update(timeStamp) {
     const timeDelta = oldTimeStamp == 0 ? 0 : (timeStamp - oldTimeStamp) / 1000;
     oldTimeStamp = timeStamp;
     Debug.update({ timeDelta: timeDelta, particleCount: PARTICLE_COUNT });
-    console.log(timeStamp);
     gl.uniform1i(shaders.particleShaderProgram.uniforms.time, timeStamp * 1000);
     gl.uniform1f(shaders.particleShaderProgram.uniforms.timeDelta, timeDelta);
     gl.uniformMatrix4fv(shaders.particleShaderProgram.uniforms.projectionMatrix, false, camera.getProjectionMatrixValues());
