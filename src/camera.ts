@@ -1,4 +1,4 @@
-import { canvas } from './global.js'
+import { Graphics } from './graphics.js'
 import { Matrix4 } from './math/matrix4.js'
 import { Vector2 } from './math/vector2.js'
 
@@ -18,8 +18,8 @@ export class Camera {
 	public recalculate(): void {
 		const invZoom: number = 1.0 / this.zoom
 
-		const halfWidth: number = canvas.width * 0.5
-		const halfHeight: number = canvas.height * 0.5
+		const halfWidth: number = Graphics.canvas.width * 0.5
+		const halfHeight: number = Graphics.canvas.height * 0.5
 		this.left = (this.position.x - halfWidth) * invZoom
 		this.right = (this.position.x + halfWidth) * invZoom
 		this.top = (this.position.y - halfHeight) * invZoom
@@ -32,7 +32,7 @@ export class Camera {
 		const width = this.right - this.left
 		const height = this.bottom - this.top
 
-		return { x: this.left + (position.x / canvas.width) * width, y: this.top + (position.y / canvas.height) * height }
+		return { x: this.left + (position.x / Graphics.canvas.width) * width, y: this.top + (position.y / Graphics.canvas.height) * height }
 	}
 
 	public getProjectionMatrixValues = (): Float32Array => this.projectionMatrix.getValues()

@@ -1,5 +1,5 @@
 import { ShaderCompileError } from './errors/shaderCompileError.js'
-import { gl } from './global.js'
+import { Graphics } from './graphics.js'
 
 export class ShaderProgram {
 	public uniforms: any
@@ -8,35 +8,35 @@ export class ShaderProgram {
 	protected fragmentShader: WebGLShader
 
 	protected constructor(vertSrc: string, fragSrc: string, tfVaryings: string[] | null = null) {
-		this.program = gl.createProgram() as WebGLProgram
+		this.program = Graphics.ctx.createProgram() as WebGLProgram
 
-		this.fragmentShader = this.createShader(fragSrc, gl.FRAGMENT_SHADER)
-		this.vertexShader = this.createShader(vertSrc, gl.VERTEX_SHADER)
+		this.fragmentShader = this.createShader(fragSrc, Graphics.ctx.FRAGMENT_SHADER)
+		this.vertexShader = this.createShader(vertSrc, Graphics.ctx.VERTEX_SHADER)
 
-		if (tfVaryings != null) gl.transformFeedbackVaryings(this.program, tfVaryings, gl.INTERLEAVED_ATTRIBS)
+		if (tfVaryings != null) Graphics.ctx.transformFeedbackVaryings(this.program, tfVaryings, Graphics.ctx.INTERLEAVED_ATTRIBS)
 
-		gl.linkProgram(this.program)
-		const infoLog: string | null = gl.getProgramInfoLog(this.program)
+		Graphics.ctx.linkProgram(this.program)
+		const infoLog: string | null = Graphics.ctx.getProgramInfoLog(this.program)
 		if (infoLog && infoLog.length > 0) throw new ShaderCompileError(infoLog)
 
-		gl.validateProgram(this.program)
+		Graphics.ctx.validateProgram(this.program)
 	}
 
 	private createShader(src: string, type: number): WebGLShader {
-		const shader = gl.createShader(type) as WebGLShader
-		gl.shaderSource(shader, src)
+		const shader = Graphics.ctx.createShader(type) as WebGLShader
+		Graphics.ctx.shaderSource(shader, src)
 
-		gl.compileShader(shader)
-		const infoLog: string | null = gl.getShaderInfoLog(shader)
+		Graphics.ctx.compileShader(shader)
+		const infoLog: string | null = Graphics.ctx.getShaderInfoLog(shader)
 		if (infoLog && infoLog.length > 0) throw new ShaderCompileError(infoLog)
 
-		gl.attachShader(this.program, shader)
+		Graphics.ctx.attachShader(this.program, shader)
 		return shader
 	}
 
-	public getUniformLocation = (name: string): WebGLUniformLocation => gl.getUniformLocation(this.program, name) as WebGLUniformLocation
-	public unbind = (): void => gl.useProgram(null)
-	public bind = (): void => gl.useProgram(this.program)
+	public getUniformLocation = (name: string): WebGLUniformLocation => Graphics.ctx.getUniformLocation(this.program, name) as WebGLUniformLocation
+	public unbind = (): void => Graphics.ctx.useProgram(null)
+	public bind = (): void => Graphics.ctx.useProgram(this.program)
 
 	public getFragmentShader = (): WebGLShader => this.fragmentShader
 	public getVertexShader = (): WebGLShader => this.vertexShader

@@ -1,20 +1,19 @@
-import { camera, canvas, gl, shaders } from './global.js'
-import { WebGL2NotSupportedError } from './errors/webGL2Error.js'
+import { Graphics } from './graphics.js'
 import { ParticleSystem } from './particleSystem.js'
 import { Debug } from './debug.js'
+import { Global } from './global.js'
+import { Resources } from './resources.js'
+import { Logger } from './logger.js'
 
 const PARTICLE_COUNT: number = 10_000
-const particleSystem: ParticleSystem = new ParticleSystem(PARTICLE_COUNT)
+let particleSystem: ParticleSystem
 let oldTimeStamp: DOMHighResTimeStamp = 0
 
 function init(): void {
-	if (!gl) throw new WebGL2NotSupportedError()
-
-	gl.enable(gl.BLEND)
-	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
-
-	gl.uniform1i(shaders.particleShaderProgram.uniforms.init, 1)
-
+	Graphics.init()
+	Resources.init()
+	Global.init()
+	particleSystem = new ParticleSystem(PARTICLE_COUNT)
 	updateSize()
 	requestAnimationFrame(animationFrame)
 }
@@ -22,7 +21,8 @@ function init(): void {
 function animationFrame(timeStamp: DOMHighResTimeStamp): void {
 	requestAnimationFrame(animationFrame)
 	update(timeStamp)
-	draw()
+	Graphics.clear()
+	Graphics.draw(particleSystem)
 }
 
 function update(timeStamp: DOMHighResTimeStamp): void {
@@ -31,17 +31,9 @@ function update(timeStamp: DOMHighResTimeStamp): void {
 
 	Debug.update({ timeDelta: timeDelta, particleCount: PARTICLE_COUNT })
 
-	gl.uniform1i(shaders.particleShaderProgram.uniforms.time, timeStamp * 1000)
-	gl.uniform1f(shaders.particleShaderProgram.uniforms.timeDelta, timeDelta)
-	gl.uniformMatrix4fv(shaders.particleShaderProgram.uniforms.projectionMatrix, false, camera.getProjectionMatrixValues())
-}
-
-function draw(): void {
-	gl.clearColor(0.0, 0.0, 0, 1.0)
-	gl.clear(gl.COLOR_BUFFER_BIT)
-
-	particleSystem.draw()
-	gl.uniform1i(shaders.particleShaderProgram.uniforms.init, 0)
+	Graphics.ctx.uniform1i(Resources.shaders.particleShaderProgram?.uniforms.time, timeStamp * 1000)
+	Graphics.ctx.uniform1f(Resources.shaders.particleShaderProgram?.uniforms.timeDelta, timeDelta)
+	Graphics.ctx.uniformMatrix4fv(Resources.shaders.particleShaderProgram?.uniforms.projectionMatrix, false, Global.camera.getProjectionMatrixValues())
 }
 
 function updateSize(): void {
@@ -50,13 +42,13 @@ function updateSize(): void {
 
 	if (width === 0 || height === 0) return
 
-	console.log(`Resizing: ${width}x${height}`)
+	Logger.Log(`New canvas size: ${width}x${height}`, Logger.Color.CYAN)
 
-	canvas.width = width
-	canvas.height = height
-	gl.viewport(0, 0, width, height)
+	Graphics.canvas.width = width
+	Graphics.canvas.height = height
+	Graphics.ctx.viewport(0, 0, width, height)
 
-	camera.recalculate()
+	Global.camera.recalculate()
 }
 
 document.addEventListener('DOMContentLoaded', init)

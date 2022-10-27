@@ -52,7 +52,7 @@ export class Matrix4 {
 		this.values[15] = this.values[15] + this.values[3] * vec.x + this.values[7] * vec.y
 	}
 
-	public multiplied(other: Matrix4, dest: Matrix4) {
+	public multiplied(other: Matrix4, dest: Matrix4): void {
 		let a00 = this.values[0],
 			a01 = this.values[1],
 			a02 = this.values[2],
